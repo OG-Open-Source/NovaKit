@@ -25,8 +25,8 @@ NovaKit JS is dedicated to the mission of "Illuminating a new generation of inte
 
 ## Contributors
 
-<a href="https://github.com/OG-Open-Source/.github/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=OG-Open-Source/.github" />
+<a href="https://github.com/OG-Open-Source/NovaKit/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=OG-Open-Source/NovaKit" />
 </a>
 
 ## Contributing

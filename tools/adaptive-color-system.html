@@ -5,12 +5,6 @@
 		<title>NovaKit | Adaptive Oklab-based Tonal System Generator</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<style>
-			.color-swatch-text-light {
-				color: white;
-			}
-			.color-swatch-text-dark {
-				color: black;
-			}
 			.color-card {
 				transition: transform 0.2s, box-shadow 0.2s;
 			}
@@ -18,121 +12,187 @@
 				transform: translateY(-2px);
 				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 			}
+			.tab-btn {
+				padding: 8px 16px;
+				cursor: pointer;
+				border: none;
+				background-color: transparent;
+				color: #6b7280; /* gray-500 */
+				border-bottom: 2px solid transparent;
+				font-weight: 500;
+				margin-bottom: -1px; /* Overlap border */
+			}
+			.tab-btn:hover {
+				color: #111827; /* gray-900 */
+			}
+			.tab-btn.active {
+				color: #4f46e5; /* indigo-600 */
+				border-bottom-color: #4f46e5; /* indigo-600 */
+				font-weight: 600;
+			}
+			.tab-content {
+				display: none;
+			}
+			.tab-content.active {
+				display: block;
+			}
 		</style>
 	</head>
 	<body class="bg-gray-100 font-sans p-4 sm:p-8">
 		<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 			<!-- Controls Panel -->
-			<div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg space-y-6">
+			<div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg flex flex-col lg:sticky lg:top-8" style="max-height: calc(100vh - 4rem)">
 				<div class="border-b pb-4">
 					<h1 class="text-2xl font-bold text-gray-800">Tonal System Generator</h1>
 					<p class="text-sm text-gray-500 mt-1">Create styled color palettes based on Oklab.</p>
 				</div>
 
-				<fieldset class="border border-gray-200 p-4 rounded-lg">
-					<legend class="text-sm font-bold text-gray-600 px-2">1. Source Colors</legend>
-					<div class="space-y-4">
-						<!-- Primary Color -->
-						<div>
-							<label for="primaryColorHex" class="text-sm font-medium text-gray-700">Primary Color</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="primaryColorPicker" value="#6495ed" class="h-10 w-10 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="primaryColorHex" value="#6495ed" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm" />
-							</div>
-							<label for="primaryWeight" class="block text-xs text-gray-600 mt-2">Weight: <span id="primaryWeightLabel">70</span>%</label>
-							<input type="range" id="primaryWeight" min="0" max="100" value="70" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-						</div>
-						<!-- Secondary Colors Container -->
-						<div id="secondaryColorsContainer" class="space-y-4"></div>
-						<button id="addSecondaryColorBtn" class="w-full mt-2 bg-gray-200 text-gray-700 text-sm font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">+ Add Secondary Color</button>
-					</div>
-				</fieldset>
+				<!-- Tab Navigation -->
+				<div class="flex border-b border-gray-200 -mx-6 px-6">
+					<button id="tab-btn-core" class="tab-btn active">Core Palette</button>
+					<button id="tab-btn-semantic" class="tab-btn">Semantic</button>
+					<button id="tab-btn-display" class="tab-btn">Display & Export</button>
+				</div>
 
-				<fieldset class="border border-gray-200 p-4 rounded-lg">
-					<legend class="text-sm font-bold text-gray-600 px-2">2. Generation Parameters</legend>
-					<div class="space-y-4">
-						<div>
-							<label for="styleIntensity" class="text-sm font-medium text-gray-700">Overall Style Intensity: <span id="styleIntensityLabel">15</span>%</label>
-							<input type="range" id="styleIntensity" min="0" max="100" value="15" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1" />
-						</div>
-						<div>
-							<label for="primaryBaseStep" class="text-sm font-medium text-gray-700">Tonal Base (500 is center): <span id="primaryBaseStepLabel">600</span></label>
-							<input type="range" id="primaryBaseStep" min="100" max="900" step="100" value="600" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1" />
-						</div>
-					</div>
-				</fieldset>
+				<!-- Tab Content -->
+				<div class="flex-grow pt-6 overflow-y-auto">
+					<!-- Tab 1: Core Palette -->
+					<div id="tab-content-core" class="tab-content active space-y-6">
+						<fieldset class="border border-gray-200 p-4 rounded-lg">
+							<legend class="text-sm font-bold text-gray-600 px-2">Source Colors</legend>
+							<div class="space-y-4">
+								<!-- Primary Color -->
+								<div>
+									<label for="primaryColorHex" class="text-sm font-medium text-gray-700">Primary Color</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="primaryColorPicker" value="#6495ed" class="h-10 w-10 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="primaryColorHex" value="#6495ed" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm" />
+									</div>
+									<label for="primaryWeight" class="block text-xs text-gray-600 mt-2">Weight: <span id="primaryWeightLabel">70</span>%</label>
+									<input type="range" id="primaryWeight" min="0" max="100" value="70" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
+								</div>
+								<!-- Secondary Colors Container -->
+								<div id="secondaryColorsContainer" class="space-y-4"></div>
+								<button id="addSecondaryColorBtn" class="w-full mt-2 bg-gray-200 text-gray-700 text-sm font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">+ Add Secondary Color</button>
+							</div>
+						</fieldset>
 
-				<fieldset class="border border-gray-200 p-4 rounded-lg">
-					<legend class="text-sm font-bold text-gray-600 px-2">3. Semantic Base Colors</legend>
-					<div class="grid grid-cols-2 gap-4">
-						<!-- Semantic color inputs -->
-						<div>
-							<label for="baseSuccessColorHex" class="text-xs font-medium text-gray-700">Success</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="baseSuccessColorPicker" value="#33cc55" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="baseSuccessColorHex" value="#33cc55" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+						<fieldset class="border border-gray-200 p-4 rounded-lg">
+							<legend class="text-sm font-bold text-gray-600 px-2">Generation Parameters</legend>
+							<div class="space-y-4">
+								<div>
+									<label for="styleIntensity" class="text-sm font-medium text-gray-700">Overall Style Intensity: <span id="styleIntensityLabel">15</span>%</label>
+									<input type="range" id="styleIntensity" min="0" max="100" value="15" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1" />
+								</div>
+								<div>
+									<label for="primaryBaseStep" class="text-sm font-medium text-gray-700">Tonal Base (500 is center): <span id="primaryBaseStepLabel">600</span></label>
+									<input type="range" id="primaryBaseStep" min="100" max="900" step="100" value="600" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1" />
+								</div>
 							</div>
-						</div>
-						<div>
-							<label for="baseWarningColorHex" class="text-xs font-medium text-gray-700">Warning</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="baseWarningColorPicker" value="#ffcc33" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="baseWarningColorHex" value="#ffcc33" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
-							</div>
-						</div>
-						<div>
-							<label for="baseErrorColorHex" class="text-xs font-medium text-gray-700">Error</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="baseErrorColorPicker" value="#cc3333" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="baseErrorColorHex" value="#cc3333" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
-							</div>
-						</div>
-						<div>
-							<label for="baseInfoColorHex" class="text-xs font-medium text-gray-700">Info</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="baseInfoColorPicker" value="#0066cc" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="baseInfoColorHex" value="#0066cc" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
-							</div>
-						</div>
-						<div>
-							<label for="baseDisabledColorHex" class="text-xs font-medium text-gray-700">Disabled</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="baseDisabledColorPicker" value="#667799" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="baseDisabledColorHex" value="#667799" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
-							</div>
-						</div>
-						<div>
-							<label for="baseNewColorHex" class="text-xs font-medium text-gray-700">New/Special</label>
-							<div class="flex items-center gap-2 mt-1">
-								<input type="color" id="baseNewColorPicker" value="#8844dd" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
-								<input type="text" id="baseNewColorHex" value="#8844dd" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
-							</div>
-						</div>
+						</fieldset>
+						<!-- "Regenerate" button removed as per user request. Regeneration is now automatic on input change. -->
 					</div>
-				</fieldset>
-				<fieldset class="border border-gray-200 p-4 rounded-lg">
-					<legend class="text-sm font-bold text-gray-600 px-2">4. Actions</legend>
-					<div>
-						<div class="text-sm font-medium text-gray-700">Style Core</div>
-						<div id="styleCoreDisplay" class="mt-1 p-3 bg-gray-100 rounded-md font-mono text-xs text-gray-700 whitespace-pre">Click "Regenerate" to see values</div>
+
+					<!-- Tab 2: Semantic Colors -->
+					<div id="tab-content-semantic" class="tab-content space-y-6">
+						<fieldset class="border border-gray-200 p-4 rounded-lg">
+							<legend class="text-sm font-bold text-gray-600 px-2">Semantic Base Colors</legend>
+							<div class="grid grid-cols-1 gap-6">
+								<!-- Semantic color inputs -->
+								<div>
+									<label for="baseSuccessColorHex" class="text-xs font-medium text-gray-700">Success</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="baseSuccessColorPicker" value="#33cc55" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="baseSuccessColorHex" value="#33cc55" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+									</div>
+								</div>
+								<div>
+									<label for="baseWarningColorHex" class="text-xs font-medium text-gray-700">Warning</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="baseWarningColorPicker" value="#ffcc33" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="baseWarningColorHex" value="#ffcc33" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+									</div>
+								</div>
+								<div>
+									<label for="baseErrorColorHex" class="text-xs font-medium text-gray-700">Error</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="baseErrorColorPicker" value="#cc3333" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="baseErrorColorHex" value="#cc3333" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+									</div>
+								</div>
+								<div>
+									<label for="baseInfoColorHex" class="text-xs font-medium text-gray-700">Info</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="baseInfoColorPicker" value="#0066cc" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="baseInfoColorHex" value="#0066cc" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+									</div>
+								</div>
+								<div>
+									<label for="baseDisabledColorHex" class="text-xs font-medium text-gray-700">Disabled</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="baseDisabledColorPicker" value="#667799" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="baseDisabledColorHex" value="#667799" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+									</div>
+								</div>
+								<div>
+									<label for="baseNewColorHex" class="text-xs font-medium text-gray-700">New/Special</label>
+									<div class="flex items-center gap-2 mt-1">
+										<input type="color" id="baseNewColorPicker" value="#8844dd" class="h-8 w-8 p-1 border-gray-300 rounded-md cursor-pointer" />
+										<input type="text" id="baseNewColorHex" value="#8844dd" class="block w-full rounded-md border-gray-300 shadow-sm font-mono text-xs" />
+									</div>
+								</div>
+							</div>
+						</fieldset>
 					</div>
-					<div class="flex gap-4 mt-4">
-						<button onclick="generateTonalSystem()" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Regenerate</button>
-						<button onclick="openExportModal()" class="w-full bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors">Export CSS</button>
+
+					<!-- Tab 3: Display & Export -->
+					<div id="tab-content-display" class="tab-content space-y-6">
+						<fieldset class="border border-gray-200 p-4 rounded-lg">
+							<legend class="text-sm font-bold text-gray-600 px-2">Display Options</legend>
+							<div class="space-y-4">
+								<div class="border-t pt-4">
+									<div class="flex items-center">
+										<input id="useStyledTextColor" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+										<label for="useStyledTextColor" class="ml-2 block text-sm text-gray-900">Use Styled Text Color</label>
+									</div>
+									<div class="mt-2">
+										<label for="styledTextChroma" class="text-xs text-gray-600">Chroma Intensity: <span id="styledTextChromaLabel">50</span>%</label>
+										<input type="range" id="styledTextChroma" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1" />
+									</div>
+									<div class="mt-4">
+										<label for="styledTextBrightness" class="text-xs text-gray-600">Brightness Boost: <span id="styledTextBrightnessLabel">50</span>%</label>
+										<input type="range" id="styledTextBrightness" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1" />
+									</div>
+								</div>
+							</div>
+						</fieldset>
+						<fieldset class="border border-gray-200 p-4 rounded-lg">
+							<legend class="text-sm font-bold text-gray-600 px-2">Export</legend>
+							<div>
+								<div class="text-sm font-medium text-gray-700">Style Core</div>
+								<div id="styleCoreDisplay" class="mt-1 p-3 bg-gray-100 rounded-md font-mono text-xs whitespace-pre">Click "Regenerate" to see values</div>
+							</div>
+							<div class="flex gap-4 mt-4">
+								<button onclick="openExportModal()" class="w-full bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors">Export CSS</button>
+							</div>
+						</fieldset>
 					</div>
-				</fieldset>
+				</div>
 			</div>
 
 			<!-- Results Panel -->
 			<div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg space-y-8">
+				<div class="text-sm text-gray-500 text-center border-b pb-4">
+					<p><strong>Tip:</strong> Click a color swatch to copy its hex. Click the info area below it to copy the text color. <kbd>Alt</kbd> + Click a swatch to set it as the page background.</p>
+				</div>
 				<section>
 					<h2 class="text-xl font-bold text-gray-800 border-b pb-2">Styled Neutral Scale</h2>
-					<div id="neutralPalette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-3"></div>
+					<div id="neutralPalette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
 					<div id="neutralDebugScale" class="mt-4"></div>
 				</section>
 				<section>
 					<h2 class="text-xl font-bold text-gray-800 border-b pb-2">Primary Tonal Scale</h2>
-					<div id="primaryPalette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-3"></div>
+					<div id="primaryPalette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
 					<div id="primaryDebugScale" class="mt-4"></div>
 				</section>
 				<!-- Secondary Palettes Container -->
@@ -140,7 +200,6 @@
 				<section>
 					<h2 class="text-xl font-bold text-gray-800 border-b pb-2">Styled Semantic Colors</h2>
 					<div id="semanticPalette" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4"></div>
-					<div id="semanticDebugScale" class="mt-4"></div>
 				</section>
 			</div>
 		</div>
@@ -276,6 +335,8 @@
 			// =================================================================================
 			let generatedPalettes = {};
 			let secondaryColorCounter = 0;
+			let styledTextChromaIntensity = 0.5;
+			let styledTextBrightnessFactor = 0.5;
 			const LUMINANCE_SCALE = { 50: 0.98, 100: 0.95, 200: 0.88, 300: 0.8, 400: 0.7, 500: 0.6, 600: 0.5, 700: 0.4, 800: 0.25, 900: 0.12, 950: 0.05 };
 			const TONAL_SCALE_KEYS = Object.keys(LUMINANCE_SCALE);
 
@@ -404,12 +465,54 @@
 			// =================================================================================
 
 			/**
+			 * Determines the best contrasting text color for a given background hex color.
+			 * @param {string} backgroundHex - The hex code of the background color.
+			 * @param {object} neutralPalette - The neutral palette to use for styled text.
+			 * @returns {string} The hex code for the accessible text color ('#000000' or '#FFFFFF' or a styled color).
+			 */
+			function getAccessibleTextColor(backgroundHex, neutralPalette) {
+				const oklab = linear_srgb_to_oklab(hex_to_linear_srgb(backgroundHex));
+				const useStyled = document.getElementById("useStyledTextColor").checked;
+
+				if (useStyled) {
+					const oklch = oklab_to_oklch(oklab);
+					const isLight = oklab.L > 0.6;
+
+					// The original offset determining contrast.
+					const baseContrastOffset = 0.5;
+
+					// The user wants to make it "brighter". A boost is added to the lightness.
+					// Slider from 0-100 (factor 0-1). 50% (0.5) is no change.
+					const brightnessBoost = (styledTextBrightnessFactor - 0.5) * 0.4; // Range of -0.2 to +0.2
+
+					let targetL;
+					if (isLight) {
+						// Dark text on light background. Higher L = "brighter" (less dark) text.
+						targetL = oklab.L - baseContrastOffset + brightnessBoost;
+					} else {
+						// Light text on dark background. Higher L = "brighter" text.
+						targetL = oklab.L + baseContrastOffset + brightnessBoost;
+					}
+
+					targetL = Math.max(0, Math.min(1, targetL)); // Clamp to valid range
+
+					const targetChroma = oklch.c * styledTextChromaIntensity;
+					const candidateOklab = oklch_to_oklab(Lch(targetL, targetChroma, oklch.h));
+					return linear_srgb_to_hex(oklab_to_linear_srgb(candidateOklab));
+				}
+
+				// Fallback to simple black or white
+				return oklab.L > 0.6 ? "#000000" : "#FFFFFF";
+			}
+
+			/**
 			 * Renders a color palette into a specified container.
 			 * @param {string} containerId - The ID of the DOM element to render into.
 			 * @param {Object} paletteData - The palette data to render.
 			 * @param {string} titlePrefix - A prefix for the color name (e.g., "P-").
+			 * @param {object} neutralPalette - The neutral palette for calculating text color.
 			 */
-			function renderPalette(containerId, paletteData, titlePrefix = "") {
+			function renderPalette(containerId, paletteData, titlePrefix = "", neutralPalette) {
 				const container = document.getElementById(containerId);
 				if (!container) return;
 				container.innerHTML = "";
@@ -417,21 +520,71 @@
 
 				Object.keys(paletteData).forEach((key) => {
 					const color = paletteData[key];
-					const oklab = linear_srgb_to_oklab(hex_to_linear_srgb(color.hex));
-					const textColorClass = oklab.L > 0.6 ? "color-swatch-text-dark" : "color-swatch-text-light";
+					const textColor = getAccessibleTextColor(color.hex, neutralPalette);
+					const colorName = `${titlePrefix}${color.name}`;
 
 					const card = document.createElement("div");
-					card.className = "color-card rounded-lg overflow-hidden shadow-sm cursor-pointer border border-gray-200";
-					card.dataset.colorHex = color.hex;
-					card.dataset.colorName = `${titlePrefix}${color.name}`;
+					card.className = "color-card rounded-lg overflow-hidden shadow-sm border border-gray-200 flex flex-col";
+					card.dataset.bgColor = color.hex;
+					card.dataset.textColor = textColor;
+					card.dataset.colorName = colorName;
+
 					card.innerHTML = `
-						<div class="h-16 sm:h-20 flex justify-center items-center font-bold text-sm ${textColorClass}" style="background-color: ${color.hex};">
-							${titlePrefix}${color.name}
+						<div class="swatch-area h-24 sm:h-28 flex justify-center items-center font-bold text-sm cursor-pointer" style="background-color: ${color.hex}; color: ${textColor};">
+							<span class="swatch-label">${colorName}</span>
 						</div>
-						<div class="p-2 bg-white font-mono text-xs text-center text-gray-600">
-							${color.hex}
+						<div class="info-area p-3 bg-white text-xs cursor-pointer hover:bg-gray-50 transition-colors">
+							<div class="flex justify-between items-center">
+								<span class="text-gray-500">TEXT</span>
+								<span class="font-mono text-gray-800" title="Click to copy text color">${textColor}</span>
+							</div>
 						</div>`;
-					card.addEventListener("click", () => setBackgroundColor(color.hex, `${titlePrefix}${color.name}`));
+
+					const swatchArea = card.querySelector(".swatch-area");
+					const infoArea = card.querySelector(".info-area");
+					const swatchLabel = card.querySelector(".swatch-label");
+					const textColorLabel = infoArea.querySelector(".font-mono");
+
+					swatchArea.addEventListener("mouseenter", () => {
+						if (!swatchLabel.textContent.includes("Copied")) {
+							swatchLabel.textContent = color.hex;
+						}
+					});
+
+					swatchArea.addEventListener("mouseleave", () => {
+						if (!swatchLabel.textContent.includes("Copied")) {
+							swatchLabel.textContent = colorName;
+						}
+					});
+
+					// Click to copy BG color
+					swatchArea.addEventListener("click", (event) => {
+						if (event.altKey) {
+							setBackgroundColor(color.hex, colorName);
+							return;
+						}
+
+						navigator.clipboard.writeText(color.hex).then(() => {
+							const originalText = swatchLabel.textContent;
+							swatchLabel.textContent = "Copied BG!";
+							setTimeout(() => {
+								const isHovering = swatchArea.matches(":hover");
+								swatchLabel.textContent = isHovering ? color.hex : colorName;
+							}, 1200);
+						});
+					});
+
+					// Click to copy TEXT color
+					infoArea.addEventListener("click", () => {
+						navigator.clipboard.writeText(textColor).then(() => {
+							const originalText = textColorLabel.textContent;
+							textColorLabel.textContent = "Copied Text!";
+							setTimeout(() => {
+								textColorLabel.textContent = originalText;
+							}, 1200);
+						});
+					});
+
 					container.appendChild(card);
 				});
 			}
@@ -513,12 +666,12 @@
 						const idSuffix = secColor.name.replace("secondary", "");
 						section.innerHTML = `
 							<h2 class="text-xl font-bold text-gray-800 border-b pb-2">Secondary Tonal Scale (${idSuffix})</h2>
-							<div id="${secColor.name}Palette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-3"></div>
+							<div id="${secColor.name}Palette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
 							<div id="${secColor.name}DebugScale" class="mt-4"></div>
 						`;
 						secondaryPalettesContainer.appendChild(section);
 
-						renderPalette(`${secColor.name}Palette`, palette, `S${idSuffix}-`);
+						renderPalette(`${secColor.name}Palette`, palette, `S${idSuffix}-`, generatedPalettes.neutral);
 						renderDebugLuminanceScale(`${secColor.name}DebugScale`, palette);
 					}
 				});
@@ -539,12 +692,11 @@
 				});
 
 				// 6. Render all palettes
-				renderPalette("neutralPalette", generatedPalettes.neutral, "N-");
-				renderPalette("primaryPalette", generatedPalettes.primary, "P-");
-				renderPalette("semanticPalette", generatedPalettes.semantic, "");
+				renderPalette("neutralPalette", generatedPalettes.neutral, "N-", generatedPalettes.neutral);
+				renderPalette("primaryPalette", generatedPalettes.primary, "P-", generatedPalettes.neutral);
+				renderPalette("semanticPalette", generatedPalettes.semantic, "", generatedPalettes.neutral);
 				renderDebugLuminanceScale("neutralDebugScale", generatedPalettes.neutral);
 				renderDebugLuminanceScale("primaryDebugScale", generatedPalettes.primary);
-				renderDebugLuminanceScale("semanticDebugScale", generatedPalettes.semantic);
 			}
 
 			/**
@@ -658,17 +810,47 @@
 				generateTonalSystem();
 			}
 
+			function setupTabs() {
+				const tabs = document.querySelectorAll(".tab-btn");
+				const tabContents = document.querySelectorAll(".tab-content");
+
+				tabs.forEach((tab) => {
+					tab.addEventListener("click", () => {
+						// Deactivate all
+						tabs.forEach((t) => t.classList.remove("active"));
+						tabContents.forEach((c) => c.classList.remove("active"));
+
+						// Activate clicked
+						tab.classList.add("active");
+						const contentId = tab.id.replace("-btn-", "-content-");
+						document.getElementById(contentId).classList.add("active");
+					});
+				});
+			}
+
 			function setupUI() {
+				setupTabs();
 				setupColorInputs("primaryColorPicker", "primaryColorHex");
 				setupRangeLabel("primaryWeight", "primaryWeightLabel");
 				setupRangeLabel("styleIntensity", "styleIntensityLabel");
 				setupRangeLabel("primaryBaseStep", "primaryBaseStepLabel");
+				setupRangeLabel("styledTextChroma", "styledTextChromaLabel");
+				setupRangeLabel("styledTextBrightness", "styledTextBrightnessLabel");
+
+				document.getElementById("styledTextChroma").addEventListener("input", (e) => {
+					styledTextChromaIntensity = parseInt(e.target.value) / 100;
+					generateTonalSystem();
+				});
+				document.getElementById("styledTextBrightness").addEventListener("input", (e) => {
+					styledTextBrightnessFactor = parseInt(e.target.value) / 100;
+					generateTonalSystem();
+				});
 
 				const semanticColors = ["Success", "Warning", "Error", "Info", "Disabled", "New"];
 				semanticColors.forEach((c) => setupColorInputs(`base${c}ColorPicker`, `base${c}ColorHex`));
 
 				document.getElementById("addSecondaryColorBtn").addEventListener("click", addSecondaryColor);
-				document.querySelectorAll("input").forEach((input) => input.addEventListener("input", generateTonalSystem));
+				document.querySelectorAll('input:not([id="styledTextChroma"]):not([id="styledTextBrightness"])').forEach((input) => input.addEventListener("input", generateTonalSystem));
 
 				addSecondaryColor(); // Add one by default
 				document.addEventListener("DOMContentLoaded", generateTonalSystem);
