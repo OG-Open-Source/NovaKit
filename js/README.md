@@ -6,12 +6,12 @@ A modern, comprehensive JavaScript UI/UX library designed to build stunning, int
 
 ## Table of Contents
 
--   [Introduction](#introduction)
--   [Features](#features)
--   [Usage](#usage)
--   [Contributors](#contributors)
--   [Contributing](#contributing)
--   [License](#license)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Usage](#usage)
+- [Contributors](#contributors)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
@@ -26,7 +26,7 @@ NovaKit JS is dedicated to the mission of "Illuminating a new generation of inte
 ## Contributors
 
 <a href="https://github.com/OG-Open-Source/NovaKit/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=OG-Open-Source/NovaKit" />
+  <img src="https://contrib.rocks/image?repo=OG-Open-Source/NovaKit" alt="Contributor list and icons for the OG-Open-Source/NovaKit project" />
 </a>
 
 ## Contributing
