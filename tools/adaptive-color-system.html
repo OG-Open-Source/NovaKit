@@ -305,7 +305,7 @@
 				const g = Math.round(255 * linear_to_srgb(linear_srgb.g));
 				const b = Math.round(255 * linear_to_srgb(linear_srgb.b));
 
-				const toHexComponent = (c) => c.toString(16).padStart(2, "0");
+				const toHexComponent = (c) => c.toString(16).padStart(2, '0');
 
 				return `#${toHexComponent(r)}${toHexComponent(g)}${toHexComponent(b)}`.toUpperCase();
 			}
@@ -472,7 +472,7 @@
 			 */
 			function getAccessibleTextColor(backgroundHex, neutralPalette) {
 				const oklab = linear_srgb_to_oklab(hex_to_linear_srgb(backgroundHex));
-				const useStyled = document.getElementById("useStyledTextColor").checked;
+				const useStyled = document.getElementById('useStyledTextColor').checked;
 
 				if (useStyled) {
 					const oklch = oklab_to_oklch(oklab);
@@ -502,7 +502,7 @@
 				}
 
 				// Fallback to simple black or white
-				return oklab.L > 0.6 ? "#000000" : "#FFFFFF";
+				return oklab.L > 0.6 ? '#000000' : '#FFFFFF';
 			}
 
 			/**
@@ -512,10 +512,10 @@
 			 * @param {string} titlePrefix - A prefix for the color name (e.g., "P-").
 			 * @param {object} neutralPalette - The neutral palette for calculating text color.
 			 */
-			function renderPalette(containerId, paletteData, titlePrefix = "", neutralPalette) {
+			function renderPalette(containerId, paletteData, titlePrefix = '', neutralPalette) {
 				const container = document.getElementById(containerId);
 				if (!container) return;
-				container.innerHTML = "";
+				container.innerHTML = '';
 				if (!paletteData) return;
 
 				Object.keys(paletteData).forEach((key) => {
@@ -523,8 +523,8 @@
 					const textColor = getAccessibleTextColor(color.hex, neutralPalette);
 					const colorName = `${titlePrefix}${color.name}`;
 
-					const card = document.createElement("div");
-					card.className = "color-card rounded-lg overflow-hidden shadow-sm border border-gray-200 flex flex-col";
+					const card = document.createElement('div');
+					card.className = 'color-card rounded-lg overflow-hidden shadow-sm border border-gray-200 flex flex-col';
 					card.dataset.bgColor = color.hex;
 					card.dataset.textColor = textColor;
 					card.dataset.colorName = colorName;
@@ -540,25 +540,25 @@
 							</div>
 						</div>`;
 
-					const swatchArea = card.querySelector(".swatch-area");
-					const infoArea = card.querySelector(".info-area");
-					const swatchLabel = card.querySelector(".swatch-label");
-					const textColorLabel = infoArea.querySelector(".font-mono");
+					const swatchArea = card.querySelector('.swatch-area');
+					const infoArea = card.querySelector('.info-area');
+					const swatchLabel = card.querySelector('.swatch-label');
+					const textColorLabel = infoArea.querySelector('.font-mono');
 
-					swatchArea.addEventListener("mouseenter", () => {
-						if (!swatchLabel.textContent.includes("Copied")) {
+					swatchArea.addEventListener('mouseenter', () => {
+						if (!swatchLabel.textContent.includes('Copied')) {
 							swatchLabel.textContent = color.hex;
 						}
 					});
 
-					swatchArea.addEventListener("mouseleave", () => {
-						if (!swatchLabel.textContent.includes("Copied")) {
+					swatchArea.addEventListener('mouseleave', () => {
+						if (!swatchLabel.textContent.includes('Copied')) {
 							swatchLabel.textContent = colorName;
 						}
 					});
 
 					// Click to copy BG color
-					swatchArea.addEventListener("click", (event) => {
+					swatchArea.addEventListener('click', (event) => {
 						if (event.altKey) {
 							setBackgroundColor(color.hex, colorName);
 							return;
@@ -566,19 +566,19 @@
 
 						navigator.clipboard.writeText(color.hex).then(() => {
 							const originalText = swatchLabel.textContent;
-							swatchLabel.textContent = "Copied BG!";
+							swatchLabel.textContent = 'Copied BG!';
 							setTimeout(() => {
-								const isHovering = swatchArea.matches(":hover");
+								const isHovering = swatchArea.matches(':hover');
 								swatchLabel.textContent = isHovering ? color.hex : colorName;
 							}, 1200);
 						});
 					});
 
 					// Click to copy TEXT color
-					infoArea.addEventListener("click", () => {
+					infoArea.addEventListener('click', () => {
 						navigator.clipboard.writeText(textColor).then(() => {
 							const originalText = textColorLabel.textContent;
-							textColorLabel.textContent = "Copied Text!";
+							textColorLabel.textContent = 'Copied Text!';
 							setTimeout(() => {
 								textColorLabel.textContent = originalText;
 							}, 1200);
@@ -597,20 +597,20 @@
 			function renderDebugLuminanceScale(containerId, paletteData) {
 				const container = document.getElementById(containerId);
 				if (!container || !paletteData) return;
-				container.innerHTML = "";
+				container.innerHTML = '';
 
-				const bar = document.createElement("div");
-				bar.className = "luminance-bar w-full h-10 rounded-md border border-gray-300";
+				const bar = document.createElement('div');
+				bar.className = 'luminance-bar w-full h-10 rounded-md border border-gray-300';
 
 				const sortedKeys = Object.keys(LUMINANCE_SCALE).sort((a, b) => LUMINANCE_SCALE[b] - LUMINANCE_SCALE[a]);
 				const gradientColors = sortedKeys.map((key) => (paletteData[key] ? paletteData[key].hex : linear_srgb_to_hex(oklab_to_linear_srgb(Lab(LUMINANCE_SCALE[key], 0, 0)))));
 
-				bar.style.background = `linear-gradient(to right, ${gradientColors.join(", ")})`;
+				bar.style.background = `linear-gradient(to right, ${gradientColors.join(', ')})`;
 
-				const labels = document.createElement("div");
-				labels.className = "flex justify-between font-mono text-xs text-gray-500 mt-1 px-1";
+				const labels = document.createElement('div');
+				labels.className = 'flex justify-between font-mono text-xs text-gray-500 mt-1 px-1';
 				sortedKeys.forEach((key) => {
-					const label = document.createElement("span");
+					const label = document.createElement('span');
 					label.textContent = key;
 					labels.appendChild(label);
 				});
@@ -629,8 +629,8 @@
 			 */
 			function generateTonalSystem() {
 				// 1. Gather source colors and weights from UI
-				const primaryColorHex = document.getElementById("primaryColorHex").value;
-				const primaryWeight = parseInt(document.getElementById("primaryWeight").value);
+				const primaryColorHex = document.getElementById('primaryColorHex').value;
+				const primaryWeight = parseInt(document.getElementById('primaryWeight').value);
 				const secondaryColors = [];
 				document.querySelectorAll('[id^="secondary-color-group-"]').forEach((group) => {
 					const id = group.dataset.id;
@@ -640,21 +640,21 @@
 						weight: parseInt(document.getElementById(`secondary${id}Weight`).value),
 					});
 				});
-				const allSourceColors = [{ name: "primary", hex: primaryColorHex, weight: primaryWeight }, ...secondaryColors];
+				const allSourceColors = [{ name: 'primary', hex: primaryColorHex, weight: primaryWeight }, ...secondaryColors];
 
 				// 2. Gather generation parameters
-				const styleIntensity = parseInt(document.getElementById("styleIntensity").value) / 100;
-				const primaryBaseStep = document.getElementById("primaryBaseStep").value;
+				const styleIntensity = parseInt(document.getElementById('styleIntensity').value) / 100;
+				const primaryBaseStep = document.getElementById('primaryBaseStep').value;
 
 				// 3. Calculate the core style and generate base palettes
 				const styleCore = calculateStyleCore(allSourceColors.filter((c) => c.weight > 0));
-				document.getElementById("styleCoreDisplay").textContent = `a_style: ${styleCore.a.toFixed(4)}\nb_style: ${styleCore.b.toFixed(4)}`;
+				document.getElementById('styleCoreDisplay').textContent = `a_style: ${styleCore.a.toFixed(4)}\nb_style: ${styleCore.b.toFixed(4)}`;
 				generatedPalettes.neutral = generateNeutralScale(styleCore, styleIntensity);
 				generatedPalettes.primary = generateTonalScale(primaryColorHex, styleCore, styleIntensity, primaryBaseStep);
 
 				// 4. Generate secondary palettes
-				const secondaryPalettesContainer = document.getElementById("secondaryPalettesContainer");
-				secondaryPalettesContainer.innerHTML = "";
+				const secondaryPalettesContainer = document.getElementById('secondaryPalettesContainer');
+				secondaryPalettesContainer.innerHTML = '';
 				generatedPalettes.secondaries = {};
 				secondaryColors.forEach((secColor) => {
 					if (secColor.weight > 0) {
@@ -662,8 +662,8 @@
 						generatedPalettes.secondaries[secColor.name] = palette;
 
 						// Create and append the HTML structure for the secondary palette
-						const section = document.createElement("section");
-						const idSuffix = secColor.name.replace("secondary", "");
+						const section = document.createElement('section');
+						const idSuffix = secColor.name.replace('secondary', '');
 						section.innerHTML = `
 							<h2 class="text-xl font-bold text-gray-800 border-b pb-2">Secondary Tonal Scale (${idSuffix})</h2>
 							<div id="${secColor.name}Palette" class="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
@@ -678,12 +678,12 @@
 
 				// 5. Generate styled semantic colors
 				const baseSemanticColors = {
-					success: { name: "Success", hex: document.getElementById("baseSuccessColorHex").value || "#33cc55" },
-					warning: { name: "Warning", hex: document.getElementById("baseWarningColorHex").value || "#ffcc33" },
-					error: { name: "Error", hex: document.getElementById("baseErrorColorHex").value || "#cc3333" },
-					info: { name: "Info", hex: document.getElementById("baseInfoColorHex").value || "#0066cc" },
-					disabled: { name: "Disabled", hex: document.getElementById("baseDisabledColorHex").value || "#667799" },
-					new: { name: "New", hex: document.getElementById("baseNewColorHex").value || "#8844dd" },
+					success: { name: 'Success', hex: document.getElementById('baseSuccessColorHex').value || '#33cc55' },
+					warning: { name: 'Warning', hex: document.getElementById('baseWarningColorHex').value || '#ffcc33' },
+					error: { name: 'Error', hex: document.getElementById('baseErrorColorHex').value || '#cc3333' },
+					info: { name: 'Info', hex: document.getElementById('baseInfoColorHex').value || '#0066cc' },
+					disabled: { name: 'Disabled', hex: document.getElementById('baseDisabledColorHex').value || '#667799' },
+					new: { name: 'New', hex: document.getElementById('baseNewColorHex').value || '#8844dd' },
 				};
 				generatedPalettes.semantic = {};
 				Object.keys(baseSemanticColors).forEach((key) => {
@@ -692,11 +692,11 @@
 				});
 
 				// 6. Render all palettes
-				renderPalette("neutralPalette", generatedPalettes.neutral, "N-", generatedPalettes.neutral);
-				renderPalette("primaryPalette", generatedPalettes.primary, "P-", generatedPalettes.neutral);
-				renderPalette("semanticPalette", generatedPalettes.semantic, "", generatedPalettes.neutral);
-				renderDebugLuminanceScale("neutralDebugScale", generatedPalettes.neutral);
-				renderDebugLuminanceScale("primaryDebugScale", generatedPalettes.primary);
+				renderPalette('neutralPalette', generatedPalettes.neutral, 'N-', generatedPalettes.neutral);
+				renderPalette('primaryPalette', generatedPalettes.primary, 'P-', generatedPalettes.neutral);
+				renderPalette('semanticPalette', generatedPalettes.semantic, '', generatedPalettes.neutral);
+				renderDebugLuminanceScale('neutralDebugScale', generatedPalettes.neutral);
+				renderDebugLuminanceScale('primaryDebugScale', generatedPalettes.primary);
 			}
 
 			/**
@@ -706,29 +706,29 @@
 			 */
 			function setBackgroundColor(colorHex, colorName) {
 				document.body.style.backgroundColor = colorHex;
-				const displayContainer = document.getElementById("backgroundColorDisplay");
-				const colorInfoSpan = document.getElementById("currentBgColor");
-				displayContainer.style.display = "block";
+				const displayContainer = document.getElementById('backgroundColorDisplay');
+				const colorInfoSpan = document.getElementById('currentBgColor');
+				displayContainer.style.display = 'block';
 				colorInfoSpan.textContent = `${colorName} (${colorHex})`;
 				// Per user request, the hint's text color is now fixed to black for consistent readability.
-				displayContainer.style.color = "#000000";
+				displayContainer.style.color = '#000000';
 			}
 
 			/**
 			 * Generates CSS custom properties from the generated palettes and displays them in the export modal.
 			 */
 			function exportToCSS() {
-				let cssOutput = ":root {\n";
+				let cssOutput = ':root {\n';
 
 				const paletteGroups = [
-					{ name: "neutral", data: generatedPalettes.neutral, prefix: "N-" },
-					{ name: "primary", data: generatedPalettes.primary, prefix: "P-" },
+					{ name: 'neutral', data: generatedPalettes.neutral, prefix: 'N-' },
+					{ name: 'primary', data: generatedPalettes.primary, prefix: 'P-' },
 					...Object.keys(generatedPalettes.secondaries || {}).map((key) => ({
 						name: key,
 						data: generatedPalettes.secondaries[key],
-						prefix: `S${key.replace("secondary", "")}-`,
+						prefix: `S${key.replace('secondary', '')}-`,
 					})),
-					{ name: "semantic", data: generatedPalettes.semantic, prefix: "" },
+					{ name: 'semantic', data: generatedPalettes.semantic, prefix: '' },
 				];
 
 				paletteGroups.forEach((group) => {
@@ -738,12 +738,12 @@
 							const varName = group.prefix ? `${group.prefix}${key}` : key;
 							cssOutput += `  --color-${varName.toLowerCase()}: ${group.data[key].hex};\n`;
 						});
-						cssOutput += "\n";
+						cssOutput += '\n';
 					}
 				});
 
-				cssOutput += "}";
-				document.getElementById("css-output").value = cssOutput;
+				cssOutput += '}';
+				document.getElementById('css-output').value = cssOutput;
 			}
 
 			/**
@@ -755,10 +755,10 @@
 				const colorPicker = document.getElementById(pickerId);
 				const hexInput = document.getElementById(hexInputId);
 				if (colorPicker && hexInput) {
-					colorPicker.addEventListener("input", () => (hexInput.value = colorPicker.value.toUpperCase()));
-					hexInput.addEventListener("input", () => {
+					colorPicker.addEventListener('input', () => (hexInput.value = colorPicker.value.toUpperCase()));
+					hexInput.addEventListener('input', () => {
 						if (/^#?[0-9A-F]{6}$/i.test(hexInput.value)) {
-							colorPicker.value = hexInput.value.startsWith("#") ? hexInput.value : "#" + hexInput.value;
+							colorPicker.value = hexInput.value.startsWith('#') ? hexInput.value : '#' + hexInput.value;
 						}
 					});
 				}
@@ -774,18 +774,18 @@
 				const label = document.getElementById(labelId);
 				if (rangeInput && label) {
 					label.textContent = rangeInput.value;
-					rangeInput.addEventListener("input", () => (label.textContent = rangeInput.value));
+					rangeInput.addEventListener('input', () => (label.textContent = rangeInput.value));
 				}
 			}
 
 			function addSecondaryColor() {
 				secondaryColorCounter++;
 				const id = secondaryColorCounter;
-				const container = document.getElementById("secondaryColorsContainer");
-				const div = document.createElement("div");
+				const container = document.getElementById('secondaryColorsContainer');
+				const div = document.createElement('div');
 				div.id = `secondary-color-group-${id}`;
 				div.dataset.id = id;
-				div.className = "border-t border-gray-200 pt-4";
+				div.className = 'border-t border-gray-200 pt-4';
 				div.innerHTML = `
 					<div class="flex justify-between items-center">
 						<label for="secondaryColor${id}Hex" class="text-sm font-medium text-gray-700">Secondary Color ${id}</label>
@@ -801,7 +801,7 @@
 				container.appendChild(div);
 				setupColorInputs(`secondaryColor${id}Picker`, `secondaryColor${id}Hex`);
 				setupRangeLabel(`secondary${id}Weight`, `secondary${id}WeightLabel`);
-				document.querySelectorAll("input").forEach((input) => input.addEventListener("input", generateTonalSystem));
+				document.querySelectorAll('input').forEach((input) => input.addEventListener('input', generateTonalSystem));
 				generateTonalSystem();
 			}
 
@@ -811,67 +811,67 @@
 			}
 
 			function setupTabs() {
-				const tabs = document.querySelectorAll(".tab-btn");
-				const tabContents = document.querySelectorAll(".tab-content");
+				const tabs = document.querySelectorAll('.tab-btn');
+				const tabContents = document.querySelectorAll('.tab-content');
 
 				tabs.forEach((tab) => {
-					tab.addEventListener("click", () => {
+					tab.addEventListener('click', () => {
 						// Deactivate all
-						tabs.forEach((t) => t.classList.remove("active"));
-						tabContents.forEach((c) => c.classList.remove("active"));
+						tabs.forEach((t) => t.classList.remove('active'));
+						tabContents.forEach((c) => c.classList.remove('active'));
 
 						// Activate clicked
-						tab.classList.add("active");
-						const contentId = tab.id.replace("-btn-", "-content-");
-						document.getElementById(contentId).classList.add("active");
+						tab.classList.add('active');
+						const contentId = tab.id.replace('-btn-', '-content-');
+						document.getElementById(contentId).classList.add('active');
 					});
 				});
 			}
 
 			function setupUI() {
 				setupTabs();
-				setupColorInputs("primaryColorPicker", "primaryColorHex");
-				setupRangeLabel("primaryWeight", "primaryWeightLabel");
-				setupRangeLabel("styleIntensity", "styleIntensityLabel");
-				setupRangeLabel("primaryBaseStep", "primaryBaseStepLabel");
-				setupRangeLabel("styledTextChroma", "styledTextChromaLabel");
-				setupRangeLabel("styledTextBrightness", "styledTextBrightnessLabel");
+				setupColorInputs('primaryColorPicker', 'primaryColorHex');
+				setupRangeLabel('primaryWeight', 'primaryWeightLabel');
+				setupRangeLabel('styleIntensity', 'styleIntensityLabel');
+				setupRangeLabel('primaryBaseStep', 'primaryBaseStepLabel');
+				setupRangeLabel('styledTextChroma', 'styledTextChromaLabel');
+				setupRangeLabel('styledTextBrightness', 'styledTextBrightnessLabel');
 
-				document.getElementById("styledTextChroma").addEventListener("input", (e) => {
+				document.getElementById('styledTextChroma').addEventListener('input', (e) => {
 					styledTextChromaIntensity = parseInt(e.target.value) / 100;
 					generateTonalSystem();
 				});
-				document.getElementById("styledTextBrightness").addEventListener("input", (e) => {
+				document.getElementById('styledTextBrightness').addEventListener('input', (e) => {
 					styledTextBrightnessFactor = parseInt(e.target.value) / 100;
 					generateTonalSystem();
 				});
 
-				const semanticColors = ["Success", "Warning", "Error", "Info", "Disabled", "New"];
+				const semanticColors = ['Success', 'Warning', 'Error', 'Info', 'Disabled', 'New'];
 				semanticColors.forEach((c) => setupColorInputs(`base${c}ColorPicker`, `base${c}ColorHex`));
 
-				document.getElementById("addSecondaryColorBtn").addEventListener("click", addSecondaryColor);
-				document.querySelectorAll('input:not([id="styledTextChroma"]):not([id="styledTextBrightness"])').forEach((input) => input.addEventListener("input", generateTonalSystem));
+				document.getElementById('addSecondaryColorBtn').addEventListener('click', addSecondaryColor);
+				document.querySelectorAll('input:not([id="styledTextChroma"]):not([id="styledTextBrightness"])').forEach((input) => input.addEventListener('input', generateTonalSystem));
 
 				addSecondaryColor(); // Add one by default
-				document.addEventListener("DOMContentLoaded", generateTonalSystem);
+				document.addEventListener('DOMContentLoaded', generateTonalSystem);
 			}
 
 			/** Displays the export modal. */
 			function openExportModal() {
 				exportToCSS();
-				document.getElementById("exportModal").style.display = "flex";
+				document.getElementById('exportModal').style.display = 'flex';
 			}
 
 			/** Closes the export modal. */
 			function closeExportModal() {
-				document.getElementById("exportModal").style.display = "none";
+				document.getElementById('exportModal').style.display = 'none';
 			}
 
 			// Close the modal if the user clicks outside of it.
 			window.onclick = function (event) {
-				const modal = document.getElementById("exportModal");
+				const modal = document.getElementById('exportModal');
 				if (event.target == modal) {
-					modal.style.display = "none";
+					modal.style.display = 'none';
 				}
 			};
 
