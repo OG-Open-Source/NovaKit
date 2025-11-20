@@ -8,9 +8,9 @@
  */
 
 (function (window) {
-	"use strict";
+	'use strict';
 
-	if (typeof window.NovaKit === "undefined") {
+	if (typeof window.NovaKit === 'undefined') {
 		window.NovaKit = {};
 	}
 
@@ -44,7 +44,7 @@
 			points.push({ x, y });
 		}
 		// Translate the path so its top-left is at (0,0)
-		return `${points.map((p, i) => `${i === 0 ? "M" : "L"} ${(p.x + a).toFixed(3)} ${(-p.y + b).toFixed(3)}`).join(" ")} Z`;
+		return `${points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${(p.x + a).toFixed(3)} ${(-p.y + b).toFixed(3)}`).join(' ')} Z`;
 	}
 
 	/**
@@ -75,7 +75,7 @@
 
 			this.mutationObserver = new MutationObserver((mutations) => {
 				for (const mutation of mutations) {
-					if (mutation.type === "attributes" && mutation.attributeName.startsWith("data-")) {
+					if (mutation.type === 'attributes' && mutation.attributeName.startsWith('data-')) {
 						this.render();
 						return;
 					}
@@ -102,7 +102,7 @@
 		destroy() {
 			if (this.observer) this.observer.disconnect();
 			if (this.mutationObserver) this.mutationObserver.disconnect();
-			this.element.style.clipPath = "";
+			this.element.style.clipPath = '';
 		}
 	}
 
@@ -116,7 +116,7 @@
 	 * Finds all elements with the `data-superellipse` attribute and initializes the component.
 	 */
 	function initSuperellipse() {
-		const elements = document.querySelectorAll("[data-superellipse]");
+		const elements = document.querySelectorAll('[data-superellipse]');
 		elements.forEach((el) => {
 			if (!el.superellipseInstance) {
 				el.superellipseInstance = new NovaKitSuperellipse(el);
@@ -127,8 +127,8 @@
 	window.NovaKit.Superellipse = NovaKitSuperellipse;
 	window.NovaKit.initSuperellipse = initSuperellipse;
 
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initSuperellipse);
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initSuperellipse);
 	} else {
 		initSuperellipse();
 	}
